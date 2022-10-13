@@ -13,15 +13,7 @@ public class ExamenServiceImpl implements ExamenService{
     }
 
     @Override
-    public Examen findByName(String nombre) {
-       Optional<Examen> examenOptional = examenRepository.findAll()
-               .stream()
-               .filter(e -> e.getNombre().contains(nombre))
-               .findFirst();
-       Examen examen = null;
-       if (examenOptional.isPresent()) {
-           examen = examenOptional.get();
-       }
-       return examen;
+    public Optional<Examen> findByName(String nombre) {
+        return examenRepository.findAll().stream().filter(e -> e.getNombre().contains(nombre)).findFirst();
     }
 }
