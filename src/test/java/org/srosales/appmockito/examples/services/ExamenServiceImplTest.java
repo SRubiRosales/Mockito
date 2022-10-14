@@ -2,6 +2,11 @@ package org.srosales.appmockito.examples.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.srosales.appmockito.examples.models.Examen;
 import org.srosales.appmockito.examples.repositories.ExamenRepository;
 import org.srosales.appmockito.examples.repositories.PreguntaRepository;
@@ -14,17 +19,20 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)//Habilita las anotaciones e inyeccion de dependencias
 class ExamenServiceImplTest {
 
+    @Mock
     ExamenRepository repository;
-    ExamenService service;
+    @Mock
     PreguntaRepository preguntaRepository;
+    @InjectMocks
+    ExamenServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        repository = mock(ExamenRepository.class);//Crea una simulacion de la implementacion del repositorio
-        preguntaRepository = mock(PreguntaRepository.class);
-        service = new ExamenServiceImpl(repository, preguntaRepository);
+        //Habilitar uso de anotaciones e inyeccion de dependencias
+        //MockitoAnnotations.openMocks(this);
     }
 
     @Test
