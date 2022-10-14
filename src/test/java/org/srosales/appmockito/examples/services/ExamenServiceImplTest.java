@@ -56,4 +56,27 @@ class ExamenServiceImplTest {
         assertEquals(5, examen.getPreguntas().size());
         assertTrue(examen.getPreguntas().contains("aritmética"));
     }
+
+    @Test
+    void testPreguntasExamenVerify() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        when(preguntaRepository.findQuestionsByExamId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        Examen examen = service.findExamByNameWithQuestions("Matemáticas");
+        assertEquals(5, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("aritmética"));
+        //Verify
+        verify(repository).findAll();//Se invoca el metodo findAll?
+        verify(preguntaRepository).findQuestionsByExamId(4L);
+    }
+
+    @Test
+    void testNoExiteExamenVerify() {
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+        when(preguntaRepository.findQuestionsByExamId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        Examen examen = service.findExamByNameWithQuestions("Química");
+        assertNull(examen);
+        //Verify
+        verify(repository).findAll();//Se invoca el metodo findAll?
+        verify(preguntaRepository).findQuestionsByExamId(5L);
+    }
 }
