@@ -87,4 +87,19 @@ class ExamenServiceImplTest {
         verify(repository).findAll();//Se invoca el metodo findAll?
         verify(preguntaRepository).findQuestionsByExamId(5L);
     }
+
+    @Test
+    void testGuardarExamen() {
+        Examen newExamen = Datos.EXAMEN;
+        newExamen.setPreguntas(Datos.PREGUNTAS);
+
+        when(repository.save(any(Examen.class))).thenReturn(Datos.EXAMEN);
+        Examen examen = service.save(newExamen);
+        assertNotNull(examen.getId());
+        assertEquals(8L, examen.getId());
+        assertEquals("Física", examen.getNombre());
+
+        verify(repository).save(any(Examen.class));
+        verify(preguntaRepository).saveSeveral(anyList());
+    }
 }
