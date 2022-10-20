@@ -6,7 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.srosales.appmockito.examples.models.Examen;
 import org.srosales.appmockito.examples.repositories.ExamenRepository;
 import org.srosales.appmockito.examples.repositories.PreguntaRepository;
@@ -90,15 +92,25 @@ class ExamenServiceImplTest {
 
     @Test
     void testGuardarExamen() {
+        //Given, dado un entorno de prueba
         Examen newExamen = Datos.EXAMEN;
         newExamen.setPreguntas(Datos.PREGUNTAS);
 
-        when(repository.save(any(Examen.class))).thenReturn(Datos.EXAMEN);
+        when(repository.save(any(Examen.class))).then(new Answer<Examen>() {
+            Long sequence = 8L;
+            @Override
+            public Examen answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Examen examen = invocationOnMock.getArgument(0);
+                examen.setId(sequence++);
+                return examen;
+            }
+        });
+        //When, cuando ejecutamos el metodo que queremos probar
         Examen examen = service.save(newExamen);
         assertNotNull(examen.getId());
         assertEquals(8L, examen.getId());
         assertEquals("Física", examen.getNombre());
-
+        //Then
         verify(repository).save(any(Examen.class));
         verify(preguntaRepository).saveSeveral(anyList());
     }
