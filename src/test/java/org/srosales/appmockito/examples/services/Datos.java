@@ -10,6 +10,12 @@ public class Datos {
             new Examen(5L, "Matemáticas"),
             new Examen(6L, "Ciencias"),
             new Examen(7L, "Historia"));
+
+    public final static List<Examen> EXAMENES_ID_NULL = Arrays.asList(
+            new Examen(null, "Matemáticas"),
+            new Examen(null, "Ciencias"),
+            new Examen(null, "Historia"));
+
     public final static List<String> PREGUNTAS = Arrays.asList(
             "aritmética",
             "integrales",
