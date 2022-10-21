@@ -3,10 +3,7 @@ package org.srosales.appmockito.examples.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
@@ -31,6 +28,9 @@ class ExamenServiceImplTest {
     PreguntaRepository preguntaRepository;
     @InjectMocks
     ExamenServiceImpl service;
+
+    @Captor
+    ArgumentCaptor<Long> captor;
 
     @BeforeEach
     void setUp() {
@@ -175,5 +175,16 @@ class ExamenServiceImplTest {
             return "Mensaje personalizado de error que imprime Mockito en coso de que falle el test. " +
                     argument + " debe ser un entero positivo";
         }
+    }
+
+    @Test
+    void testArgumentCaptor() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        service.findExamByNameWithQuestions("Matemáticas");
+
+        //ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+        verify(preguntaRepository).findQuestionsByExamId(captor.capture());
+
+        assertEquals(5L, captor.getValue());
     }
 }
