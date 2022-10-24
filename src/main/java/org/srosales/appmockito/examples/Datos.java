@@ -1,4 +1,4 @@
-package org.srosales.appmockito.examples.services;
+package org.srosales.appmockito.examples;
 
 import org.srosales.appmockito.examples.models.Examen;
 
