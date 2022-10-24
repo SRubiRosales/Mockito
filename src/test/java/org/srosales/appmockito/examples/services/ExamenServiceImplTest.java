@@ -198,4 +198,46 @@ class ExamenServiceImplTest {
             service.save(examen);
         });
     }
+
+    @Test
+    void testDoAnswer() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+//        when(preguntaRepository.findQuestionsByExamId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        doAnswer(invocation -> {
+            Long id = invocation.getArgument(0);
+            return id == 5 ? Datos.PREGUNTAS : null;
+        }).when(preguntaRepository).findQuestionsByExamId(anyLong());
+
+        Examen examen = service.findExamByNameWithQuestions("Matemáticas");
+        assertEquals(5, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("geometría"));
+        assertEquals(5L, examen.getId());
+        assertEquals("Matemáticas", examen.getNombre());
+
+        verify(preguntaRepository).findQuestionsByExamId(anyLong());
+    }
+
+    @Test
+    void testDoAnswerGuardarExamen() {
+        //Given, dado un entorno de prueba
+        Examen newExamen = Datos.EXAMEN;
+        newExamen.setPreguntas(Datos.PREGUNTAS);
+        doAnswer(new Answer<Examen>() {
+            Long sequence = 8L;
+            @Override
+            public Examen answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Examen examen = invocationOnMock.getArgument(0);
+                examen.setId(sequence++);
+                return examen;
+            }
+        }).when(repository).save(any(Examen.class));
+        //When, cuando ejecutamos el metodo que queremos probar
+        Examen examen = service.save(newExamen);
+        assertNotNull(examen.getId());
+        assertEquals(8L, examen.getId());
+        assertEquals("Física", examen.getNombre());
+        //Then
+        verify(repository).save(any(Examen.class));
+        verify(preguntaRepository).saveSeveral(anyList());
+    }
 }
