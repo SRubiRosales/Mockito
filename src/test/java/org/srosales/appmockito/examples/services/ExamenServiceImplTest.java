@@ -14,6 +14,7 @@ import org.srosales.appmockito.examples.repositories.ExamenRepositoryImpl;
 import org.srosales.appmockito.examples.repositories.PreguntaRepository;
 import org.srosales.appmockito.examples.repositories.PreguntasRepositoryImpl;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -251,5 +252,25 @@ class ExamenServiceImplTest {
         Examen examen = service.findExamByNameWithQuestions("Matemáticas");
         assertEquals(5L, examen.getId());
         assertEquals("Matemáticas", examen.getNombre());
+    }
+
+    @Test
+    void testSpy() {
+        ExamenRepository examenRepository = spy(ExamenRepositoryImpl.class);
+        PreguntaRepository preguntaRepository = spy(PreguntasRepositoryImpl.class);
+        ExamenService examenService = new ExamenServiceImpl(examenRepository, preguntaRepository);
+
+        List<String> preguntas = Arrays.asList("álgebra");
+        //when(preguntaRepository.findQuestionsByExamId(anyLong())).thenReturn(preguntas);
+        doReturn(preguntas).when(preguntaRepository).findQuestionsByExamId(anyLong());
+
+        Examen examen = examenService.findExamByNameWithQuestions("Matemáticas");
+        assertEquals(5, examen.getId());
+        assertEquals("Matemáticas", examen.getNombre());
+        assertEquals(1, examen.getPreguntas().size());
+        assertTrue(examen.getPreguntas().contains("álgebra"));
+
+        verify(examenRepository).findAll();
+        verify(preguntaRepository).findQuestionsByExamId(anyLong());
     }
 }
